@@ -116,7 +116,7 @@ function Header({ active = 'home' }) {
         >
           Skip to main content
         </a>
-        <div className="sticky top-0 z-50 bg-[#f7f3eb]/95 shadow-sm backdrop-blur md:static md:bg-transparent md:shadow-none md:backdrop-blur-none">
+        <div className="sticky top-0 z-50 bg-[#f7f3eb]/95 shadow-sm backdrop-blur">
         <AnnouncementStrip />
         <header className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-2 md:px-8 md:py-3">
           <a href="/" className="block" aria-label="Fidara Financial Services home">

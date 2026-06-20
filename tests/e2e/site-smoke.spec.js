@@ -29,6 +29,23 @@ test.describe('site smoke checks', () => {
     await expectNoHorizontalOverflow(page)
   })
 
+  test('top navigation remains sticky while scrolling', async ({ page, isMobile }) => {
+    await page.goto('/')
+    await acceptCookiesIfPresent(page)
+    await page.evaluate(() => window.scrollTo(0, 1200))
+
+    const header = page.locator('header')
+    await expect(header).toBeVisible()
+
+    const box = await header.boundingBox()
+    expect(box?.y ?? 999).toBeLessThanOrEqual(isMobile ? 90 : 50)
+
+    if (!isMobile) {
+      await expect(page.getByRole('link', { name: 'Client Login' }).first()).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Book a Consultation' }).first()).toBeVisible()
+    }
+  })
+
   test('mobile menu exposes client login and consultation actions', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'mobile navigation check only runs on mobile project')
 
