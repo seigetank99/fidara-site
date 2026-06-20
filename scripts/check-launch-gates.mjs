@@ -26,10 +26,15 @@ function assertIncludes(content, pattern, error, errors) {
   if (!pattern.test(content)) errors.push(error)
 }
 
+function isSearchVerificationHtml(file) {
+  const basename = path.basename(file)
+  return /^google[a-f0-9]+\.html$/i.test(basename) || /^BingSiteAuth\.xml$/i.test(basename)
+}
+
 async function main() {
   const errors = []
   const files = await listFiles(DIST_DIR)
-  const htmlFiles = files.filter((f) => f.endsWith('.html'))
+  const htmlFiles = files.filter((f) => f.endsWith('.html') && !isSearchVerificationHtml(f))
   const jsFiles = files.filter((f) => f.endsWith('.js'))
   const cssFiles = files.filter((f) => f.endsWith('.css'))
 
