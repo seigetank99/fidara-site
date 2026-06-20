@@ -7,8 +7,8 @@ import PageShell from '../../components/astro/PageShell.astro'
 <PageShell active="contact">
   <PageHero eyebrow="Referrals" title="Know someone who needs financial clarity?" description="Refer a founder, family, operator, or growing business that could benefit from calmer books, better systems, and year-round guidance.">
     <div class="mt-8 flex flex-wrap gap-4">
-      <a href={mailto('Referral for Fidara')} class="rounded-md bg-emerald-600 px-8 py-4 text-sm font-medium text-white transition hover:bg-emerald-700">
-        Send a Referral
+      <a href={mailto('Referral for Fidara', 'Hello Fidara,\n\nI would like to refer someone who may be a fit for Fidara.\n\nYour name:\nYour relationship to the person/business:\nReferral name:\nReferral email or phone:\nWhat they need help with:\nPreferred next step:\n\nNotes:\n')} class="rounded-md bg-emerald-600 px-8 py-4 text-sm font-medium text-white transition hover:bg-emerald-700">
+        Email a Referral
       </a>
       <a href="/who-we-help" class="rounded-md border border-emerald-600 px-8 py-4 text-sm font-medium text-slate-900 transition hover:bg-white">
         Who We Help
@@ -19,9 +19,9 @@ import PageShell from '../../components/astro/PageShell.astro'
   <section class="border-t border-stone-200 px-8 py-12">
     <div class="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
       {[
-        ['Step 1', 'Tell us who you are referring and what they need help with.'],
-        ['Step 2', 'We start with a calm discovery conversation.'],
-        ['Step 3', 'If there is fit, we build a support plan around their goals.'],
+        ['Step 1', 'Email us the referral’s name, contact details, and what they need help with.'],
+        ['Step 2', 'We review the situation and determine the right next step.'],
+        ['Step 3', 'If there is fit, we start with a calm discovery conversation.'],
       ].map(([title, description]) => (
         <article class="rounded-xl border border-stone-200 bg-white/60 p-6 shadow-sm">
           <h3 class="font-serif text-3xl text-slate-900">{title}</h3>

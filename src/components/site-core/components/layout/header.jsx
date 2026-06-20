@@ -116,13 +116,14 @@ function Header({ active = 'home' }) {
         >
           Skip to main content
         </a>
+        <div className="sticky top-0 z-50 bg-[#f7f3eb]/95 shadow-sm backdrop-blur md:static md:bg-transparent md:shadow-none md:backdrop-blur-none">
         <AnnouncementStrip />
-        <header className="relative z-40 mx-auto flex max-w-7xl items-center justify-between px-8 py-3">
+        <header className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-2 md:px-8 md:py-3">
           <a href="/" className="block" aria-label="Fidara Financial Services home">
             <img
                 src="/images/logo.png"
                 alt="Fidara Financial Services"
-                className="h-32 w-auto mix-blend-multiply md:h-36"
+                className="h-20 w-auto mix-blend-multiply sm:h-24 md:h-36"
             />
           </a>
 
@@ -160,7 +161,7 @@ function Header({ active = 'home' }) {
               <Menu className="details-open:hidden h-5 w-5" />
               <X className="hidden h-5 w-5 details-open:block" />
             </summary>
-              <div className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-stone-200 bg-[#f7f3eb]/98 p-5 shadow-2xl backdrop-blur">
+              <div className="absolute right-0 top-full z-50 mt-2 max-h-[calc(100vh-8rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-stone-200 bg-[#f7f3eb]/98 p-4 shadow-2xl backdrop-blur">
                 <nav className="grid gap-5" aria-label="Mobile navigation">
                   {navMenus.map((menu) => (
                       <div key={menu.label} className="border-b border-stone-200 pb-4 last:border-b-0 last:pb-0">
@@ -202,6 +203,7 @@ function Header({ active = 'home' }) {
               </div>
           </details>
         </header>
+        </div>
         <CookieBanner />
       </>
   )

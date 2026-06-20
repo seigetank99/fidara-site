@@ -115,8 +115,9 @@ const navMenus = [
 >
   Skip to main content
 </a>
+<div class="sticky top-0 z-50 bg-[#f7f3eb]/95 shadow-sm backdrop-blur md:static md:bg-transparent md:shadow-none md:backdrop-blur-none">
 <AnnouncementStrip />
-<header class="relative z-40 mx-auto flex max-w-7xl items-center justify-between px-5 py-2 md:px-8 md:py-3">
+<header class="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-2 md:px-8 md:py-3">
   <a href="/" class="block" aria-label="Fidara Financial Services home">
     <img
       src="/images/logo.png"
@@ -175,7 +176,7 @@ const navMenus = [
       </svg>
     </summary>
 
-    <div class="absolute right-0 top-full z-50 mt-2 max-h-[calc(100vh-7rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-stone-200 bg-[#f7f3eb]/98 p-4 shadow-2xl backdrop-blur">
+    <div class="absolute right-0 top-full z-50 mt-2 max-h-[calc(100vh-8rem)] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-stone-200 bg-[#f7f3eb]/98 p-4 shadow-2xl backdrop-blur">
       <nav class="grid gap-5" aria-label="Mobile navigation">
         {navMenus.map((menu) => (
           <div class="border-b border-stone-200 pb-3 last:border-b-0 last:pb-0">
@@ -213,4 +214,5 @@ const navMenus = [
     </div>
   </details>
 </header>
+</div>
 <CookieBanner />
