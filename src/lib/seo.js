@@ -125,11 +125,6 @@ export function getPageMeta(path) {
       description:
         'Explore Fidara practice areas for individuals, families, small businesses, bookkeeping cleanup, tax planning, tax notices, monthly accounting, and owner advisory.',
     },
-    '/launch-readiness': {
-      title: 'Launch Readiness Checklist | Fidara Financial Services',
-      description:
-        'An internal launch-readiness checklist for Fidara website content, legal review, proof points, technical setup, and final business details.',
-    },
     '/business-health-check': {
       title: 'Business Health Check | Fidara Financial Services',
       description:
@@ -199,11 +194,6 @@ export function getPageMeta(path) {
       title: 'Technology Systems | Fidara Financial Services',
       description:
         'Technology support for accounting systems, payroll systems, document management, dashboards, cybersecurity basics, and managed IT.',
-    },
-    '/client-portal': {
-      title: 'Client Portal | Fidara Financial Services',
-      description:
-        'A future client portal for document uploads, reports, onboarding, scheduling, support requests, and secure client workflows.',
     },
   }
 
@@ -321,7 +311,7 @@ export function getMetaImagePath(path) {
 
 export function getRobotsPolicy(path) {
   const cleanPath = normalizeRoute(path)
-  const noIndexPaths = new Set(['/404', '/launch-readiness', '/compliance-language'])
+  const noIndexPaths = new Set(['/404', '/compliance-language'])
   return noIndexPaths.has(cleanPath) ? 'noindex,nofollow' : 'index,follow'
 }
 

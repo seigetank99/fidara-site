@@ -1,5 +1,3 @@
----
-import { mailto } from '../../components/site-core/data/index.jsx'
 import PageHero from '../../components/astro/PageHero.astro'
 import PageShell from '../../components/astro/PageShell.astro'
 
@@ -10,6 +8,8 @@ const roles = [
   ['Advisory & Systems', 'Owner advisory support, KPI reporting, workflow optimization, technology process design, and managed IT coordination.'],
 ]
 ---
+
+const careersMailto = 'mailto:hr@fidaragroup.com?subject=Careers%20at%20Fidara'
 
 <PageShell active="about">
   <PageHero eyebrow="Careers" title="Build thoughtful financial systems with Fidara." description="We are always interested in thoughtful accounting, tax, advisory, operations, and technology professionals." />
@@ -28,7 +28,7 @@ const roles = [
   <section class="border-t border-stone-200 px-8 py-10">
     <div class="mx-auto grid max-w-6xl gap-8 rounded-xl border border-stone-200 bg-white/60 p-8 shadow-sm md:grid-cols-[1fr_auto] md:items-center">
       <h2 class="font-serif text-4xl leading-tight text-slate-900">Interested in future opportunities?</h2>
-      <a href={mailto('Careers at Fidara')} class="inline-flex rounded-md bg-emerald-600 px-10 py-4 text-sm font-medium text-white transition hover:bg-emerald-700">
+      <a href={careersMailto} class="inline-flex rounded-md bg-emerald-600 px-10 py-4 text-sm font-medium text-white transition hover:bg-emerald-700">
         Introduce Yourself
       </a>
     </div>

@@ -14,14 +14,12 @@ import BusinessHealthCheckPage from '../site-pages/routes/BusinessHealthCheckPag
 import CareersPage from '../site-pages/astro/CareersPage.astro'
 import CaseStudiesPage from '../site-pages/astro/CaseStudiesPage.astro'
 import ClientDocumentChecklistPage from '../site-pages/astro/ClientDocumentChecklistPage.astro'
-import ClientPortalPage from '../site-pages/astro/ClientPortalPage.astro'
 import ComplianceLanguagePage from '../site-pages/astro/ComplianceLanguagePage.astro'
 import ContactPage from '../site-pages/routes/ContactPage.jsx'
 import FAQPage from '../site-pages/astro/FAQPage.astro'
 import HomePage from '../site-pages/astro/HomePage.astro'
 import IndustriesIndexPage from '../site-pages/astro/IndustriesIndexPage.astro'
 import IndustryProfilePage from '../site-pages/astro/IndustryProfilePage.astro'
-import LaunchReadinessPage from '../site-pages/astro/LaunchReadinessPage.astro'
 import LegalPage from '../site-pages/astro/LegalPage.astro'
 import NewsletterPage from '../site-pages/routes/NewsletterPage.jsx'
 import NotFoundPage from '../site-pages/astro/NotFoundPage.astro'
@@ -66,7 +64,6 @@ const staticRouteEntries = [
   ['/who-we-help', WhoWeHelpPage],
   ['/case-studies', CaseStudiesPage],
   ['/technology', TechnologyPage],
-  ['/client-portal', ClientPortalPage],
   ['/faq', FAQPage],
   ['/services', ServicesIndexPage],
   ['/practice-areas', PracticeAreasPage],
@@ -74,7 +71,6 @@ const staticRouteEntries = [
   ['/industries', IndustriesIndexPage],
   ['/us-expansion', USExpansionPage],
   ['/tools', ToolsPage],
-  ['/launch-readiness', LaunchReadinessPage],
   ['/careers', CareersPage],
   ['/partners', PartnersPage],
   ['/referrals', ReferralsPage],

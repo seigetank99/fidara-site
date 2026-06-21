@@ -12,7 +12,6 @@ export default defineConfig({
     sitemap({
       filter: (page) => ![
         `${site}/compliance-language/`,
-        `${site}/launch-readiness/`,
         `${site}/login/`,
         `${site}/portal/`,
       ].includes(page),

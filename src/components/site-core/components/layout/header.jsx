@@ -80,7 +80,6 @@ function Header({ active = 'home' }) {
         { label: 'Tax Calendar', href: '/tax-calendar' },
         { label: 'Client Document Checklist', href: '/client-document-checklist' },
         { label: 'Newsletter', href: '/newsletter' },
-        { label: 'Launch Readiness', href: '/launch-readiness' },
         { label: 'Compliance Language', href: '/compliance-language' },
         { label: 'Clean Up Messy Books', href: '/resources/clean-up-messy-books' },
         { label: 'When You Need CFO Services', href: '/resources/when-you-need-cfo-services' },
@@ -143,7 +142,7 @@ function Header({ active = 'home' }) {
 
           <div className="hidden items-center gap-3 md:flex">
             <a
-                href="/client-portal"
+                href="/login"
                 className="rounded-md border border-stone-300 px-6 py-3 text-sm text-slate-900 transition hover:border-emerald-600 hover:bg-white"
             >
               Client Login
@@ -187,7 +186,7 @@ function Header({ active = 'home' }) {
                   ))}
 
                   <a
-                      href="/client-portal"
+                      href="/login"
                       className="rounded-md border border-stone-300 px-7 py-3 text-center text-sm font-medium text-slate-900 transition hover:bg-white"
                   >
                     Client Login
