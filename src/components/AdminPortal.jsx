@@ -76,8 +76,8 @@ export default function AdminPortal() {
       setError('')
       try {
         const [summaryResult, documentsResult] = await Promise.all([
-          fetchJson('/api/admin-summary', { headers: { accept: 'application/json' } }),
-          fetchJson('/api/admin-documents-list', { headers: { accept: 'application/json' } }),
+          fetchJson('/api/admin?action=summary', { headers: { accept: 'application/json' } }),
+          fetchJson('/api/admin?action=documents', { headers: { accept: 'application/json' } }),
         ])
 
         if (summaryResult?.unauthorized || documentsResult?.unauthorized) {
@@ -119,13 +119,13 @@ export default function AdminPortal() {
   }, [])
 
   async function handleLogout() {
-    await fetch('/api/logout', { method: 'POST' }).catch(() => {})
+    await fetch('/api/portal?action=logout', { method: 'POST' }).catch(() => {})
     redirectToLogin()
   }
 
   async function handleDownload(documentId) {
     try {
-      const result = await fetchJson('/api/admin-document-download-url', {
+      const result = await fetchJson('/api/admin?action=download-url', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',

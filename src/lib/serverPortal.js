@@ -1,5 +1,5 @@
 import process from 'node:process'
-import { getSupabaseAdmin } from '../src/lib/supabaseAdmin.js'
+import { getSupabaseAdmin } from './supabaseAdmin.js'
 
 const DEFAULT_STORAGE_BUCKET = 'fidara-client-documents'
 
@@ -9,13 +9,22 @@ export function json(res, status, body) {
   res.end(JSON.stringify(body))
 }
 
+export function parseBody(body) {
+  if (!body) return {}
+  if (typeof body === 'string') return JSON.parse(body)
+  return body
+}
+
 export function getStorageBucket() {
   return process.env.SUPABASE_STORAGE_BUCKET || DEFAULT_STORAGE_BUCKET
 }
 
+export function sanitizeFileName(fileName) {
+  return fileName.replace(/[^a-zA-Z0-9._-]/g, '-').replace(/-+/g, '-')
+}
+
 export async function getLinkedClientId(userId) {
-  const supabaseAdmin = getSupabaseAdmin()
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from('client_users')
     .select('client_id')
     .eq('user_id', userId)
@@ -24,6 +33,18 @@ export async function getLinkedClientId(userId) {
 
   if (error) throw error
   return data?.[0]?.client_id || null
+}
+
+export async function userHasClientAccess(userId, clientId) {
+  const { data, error } = await getSupabaseAdmin()
+    .from('client_users')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('client_id', clientId)
+    .limit(1)
+
+  if (error) throw error
+  return Boolean(data?.length)
 }
 
 export async function getCurrentProfile(userId) {
@@ -35,11 +56,6 @@ export async function getCurrentProfile(userId) {
 
   if (error) throw error
   return data
-}
-
-export async function isAdminUser(userId) {
-  const profile = await getCurrentProfile(userId)
-  return profile?.role === 'admin'
 }
 
 export async function requireAdmin(userId) {

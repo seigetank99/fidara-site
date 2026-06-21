@@ -31,7 +31,7 @@ export default function PortalDocuments() {
     setError('')
 
     try {
-      const response = await fetch('/api/documents-list', {
+      const response = await fetch('/api/portal?action=documents', {
         headers: { accept: 'application/json' },
       })
 
@@ -62,7 +62,7 @@ export default function PortalDocuments() {
       setError('')
 
       try {
-        const response = await fetch('/api/documents-list', {
+        const response = await fetch('/api/portal?action=documents', {
           headers: { accept: 'application/json' },
         })
 
@@ -110,7 +110,7 @@ export default function PortalDocuments() {
     setUploadError('')
 
     try {
-      const urlResponse = await fetch('/api/documents-upload-url', {
+      const urlResponse = await fetch('/api/portal?action=upload-url', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -165,7 +165,7 @@ export default function PortalDocuments() {
 
   async function handleDownload(documentId) {
     try {
-      const response = await fetch('/api/documents-download-url', {
+      const response = await fetch('/api/portal?action=download-url', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -191,7 +191,7 @@ export default function PortalDocuments() {
   }
 
   async function handleLogout() {
-    await fetch('/api/logout', { method: 'POST' }).catch(() => {})
+    await fetch('/api/portal?action=logout', { method: 'POST' }).catch(() => {})
     redirectToLogin()
   }
 

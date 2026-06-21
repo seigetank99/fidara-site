@@ -150,7 +150,7 @@ export default function ClientPortalDashboard() {
 
   async function loadSummary() {
     setSummaryLoading(true)
-    const result = await fetchJson('/api/portal-summary', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=summary', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -168,7 +168,7 @@ export default function ClientPortalDashboard() {
 
   async function loadDocuments({ showLoading = false } = {}) {
     if (showLoading) setDocumentsLoading(true)
-    const result = await fetchJson('/api/documents-list', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=documents', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -186,7 +186,7 @@ export default function ClientPortalDashboard() {
 
   async function loadBilling() {
     setBillingLoading(true)
-    const result = await fetchJson('/api/billing-list', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=billing', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -204,7 +204,7 @@ export default function ClientPortalDashboard() {
 
   async function loadRequests() {
     setRequestsLoading(true)
-    const result = await fetchJson('/api/requests-list', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=requests', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -222,7 +222,7 @@ export default function ClientPortalDashboard() {
 
   async function loadMessages() {
     setMessagesLoading(true)
-    const result = await fetchJson('/api/messages-list', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=messages', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -240,7 +240,7 @@ export default function ClientPortalDashboard() {
 
   async function loadAuditEvents() {
     setAuditLoading(true)
-    const result = await fetchJson('/api/audit-list', { headers: { accept: 'application/json' } })
+    const result = await fetchJson('/api/portal?action=audit', { headers: { accept: 'application/json' } })
 
     if (result?.unauthorized) {
       redirectToLogin()
@@ -301,7 +301,7 @@ export default function ClientPortalDashboard() {
     setUploadSuccess('')
 
     try {
-      const result = await fetchJson('/api/documents-upload-url', {
+      const result = await fetchJson('/api/portal?action=upload-url', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -353,7 +353,7 @@ export default function ClientPortalDashboard() {
 
   async function handleDownload(documentId) {
     try {
-      const result = await fetchJson('/api/documents-download-url', {
+      const result = await fetchJson('/api/portal?action=download-url', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ documentId }),
@@ -376,7 +376,7 @@ export default function ClientPortalDashboard() {
   }
 
   async function handleLogout() {
-    await fetch('/api/logout', { method: 'POST' }).catch(() => {})
+    await fetch('/api/portal?action=logout', { method: 'POST' }).catch(() => {})
     redirectToLogin()
   }
 

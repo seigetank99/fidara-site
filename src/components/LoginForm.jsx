@@ -12,7 +12,7 @@ export default function LoginForm() {
     setError('')
 
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/portal?action=login', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
