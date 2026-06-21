@@ -11,6 +11,7 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) => ![
+        `${site}/client-portal/`,
         `${site}/compliance-language/`,
         `${site}/login/`,
         `${site}/portal/`,

@@ -48,7 +48,7 @@ function Footer() {
         ['Who We Help', '/who-we-help'],
         ['Case Studies', '/case-studies'],
         ['Technology', '/technology'],
-        ['Client Login', '/login'],
+        ['Portal Login', '/login'],
         ['Careers', '/careers'],
       ],
     },
