@@ -12,21 +12,17 @@ export default async function handler(req, res) {
     const clientId = await getLinkedClientId(user.id)
     if (!clientId) return json(res, 403, { error: 'No linked client account found.' })
 
-    const supabaseAdmin = getSupabaseAdmin()
-    const { data, error } = await supabaseAdmin
-      .from('documents')
-      .select('id, original_file_name, file_type, file_size, category, status, created_at')
+    const { data, error } = await getSupabaseAdmin()
+      .from('document_requests')
+      .select('id, title, description, status, due_date, created_at')
       .eq('client_id', clientId)
       .order('created_at', { ascending: false })
 
     if (error) throw error
 
-    return json(res, 200, {
-      clientId,
-      documents: data || [],
-    })
+    return json(res, 200, { clientId, requests: data || [] })
   } catch (error) {
-    console.error('[documents-list]', error)
-    return json(res, 500, { error: 'Failed to load documents.' })
+    console.error('[requests-list]', error)
+    return json(res, 500, { error: 'Failed to load requested items.' })
   }
 }
