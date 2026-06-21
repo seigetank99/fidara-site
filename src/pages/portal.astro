@@ -1,0 +1,30 @@
+---
+import PortalDocuments from '../components/PortalDocuments.jsx'
+import PageHero from '../components/astro/PageHero.astro'
+import PageShell from '../components/astro/PageShell.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getCanonical } from '../lib/seo.js'
+
+const path = '/portal'
+---
+
+<BaseLayout
+  title="Client Portal | Fidara Group"
+  description="Secure Fidara client portal for document uploads and downloads."
+  canonical={getCanonical(path)}
+  robots="noindex,nofollow"
+>
+  <PageShell active="about">
+    <PageHero
+      eyebrow="Client Portal"
+      title="Client Portal"
+      description="Upload requested documents, review prior submissions, and retrieve files shared with your account."
+    />
+
+    <section class="border-t border-stone-200 px-8 py-12">
+      <div class="mx-auto max-w-6xl">
+        <PortalDocuments client:load />
+      </div>
+    </section>
+  </PageShell>
+</BaseLayout>

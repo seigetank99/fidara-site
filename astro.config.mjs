@@ -13,6 +13,8 @@ export default defineConfig({
       filter: (page) => ![
         `${site}/compliance-language/`,
         `${site}/launch-readiness/`,
+        `${site}/login/`,
+        `${site}/portal/`,
       ].includes(page),
     }),
   ],
