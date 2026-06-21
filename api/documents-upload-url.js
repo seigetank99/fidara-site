@@ -1,8 +1,6 @@
 import { randomUUID } from 'node:crypto'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import process from 'node:process'
 import { getCurrentUser } from './_auth.js'
-import { getR2Client } from '../src/lib/r2.js'
 import { getSupabaseAdmin } from '../src/lib/supabaseAdmin.js'
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024
@@ -13,6 +11,7 @@ const ALLOWED_FILE_TYPES = new Set([
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ])
+const DEFAULT_STORAGE_BUCKET = 'fidara-client-documents'
 
 function json(res, status, body) {
   res.statusCode = status
@@ -28,6 +27,10 @@ function parseBody(body) {
 
 function sanitizeFileName(fileName) {
   return fileName.replace(/[^a-zA-Z0-9._-]/g, '-').replace(/-+/g, '-')
+}
+
+function getStorageBucket() {
+  return process.env.SUPABASE_STORAGE_BUCKET || DEFAULT_STORAGE_BUCKET
 }
 
 async function userHasClientAccess(userId, clientId) {
@@ -48,9 +51,6 @@ export default async function handler(req, res) {
 
   const user = await getCurrentUser(req)
   if (!user) return json(res, 401, { error: 'Unauthorized' })
-
-  const bucketName = process.env.R2_BUCKET_NAME
-  if (!bucketName) return json(res, 500, { error: 'Document storage is not configured.' })
 
   let payload
   try {
@@ -79,23 +79,23 @@ export default async function handler(req, res) {
 
   try {
     const supabaseAdmin = getSupabaseAdmin()
+    const bucketName = getStorageBucket()
     const hasAccess = await userHasClientAccess(user.id, clientId)
-    if (!hasAccess) return json(res, 403, { error: 'You do not have access to this client account.' })
+
+    if (!hasAccess) {
+      return json(res, 403, { error: 'You do not have access to this client account.' })
+    }
 
     const safeFileName = sanitizeFileName(fileName) || 'document'
     const storageKey = `clients/${clientId}/${randomUUID()}-${safeFileName}`
 
-    const uploadUrl = await getSignedUrl(
-      getR2Client(),
-      new PutObjectCommand({
-        Bucket: bucketName,
-        Key: storageKey,
-        ContentType: fileType,
-      }),
-      { expiresIn: 60 * 10 },
-    )
+    const { data: upload, error: uploadError } = await supabaseAdmin.storage
+      .from(bucketName)
+      .createSignedUploadUrl(storageKey)
 
-    const { data, error } = await supabaseAdmin
+    if (uploadError || !upload) throw uploadError || new Error('Failed to create signed upload URL.')
+
+    const { data: document, error: insertError } = await supabaseAdmin
       .from('documents')
       .insert({
         client_id: clientId,
@@ -110,11 +110,15 @@ export default async function handler(req, res) {
       .select('id, client_id, uploaded_by, original_file_name, file_type, file_size, category, status, created_at')
       .single()
 
-    if (error) throw error
+    if (insertError) throw insertError
 
     return json(res, 200, {
-      uploadUrl,
-      document: data,
+      upload: {
+        path: upload.path,
+        token: upload.token,
+        signedUrl: upload.signedUrl,
+      },
+      document,
     })
   } catch (error) {
     console.error('[documents-upload-url]', error)

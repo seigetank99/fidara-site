@@ -1,8 +1,8 @@
-import { GetObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import process from 'node:process'
 import { getCurrentUser } from './_auth.js'
-import { getR2Client } from '../src/lib/r2.js'
 import { getSupabaseAdmin } from '../src/lib/supabaseAdmin.js'
+
+const DEFAULT_STORAGE_BUCKET = 'fidara-client-documents'
 
 function json(res, status, body) {
   res.statusCode = status
@@ -14,6 +14,10 @@ function parseBody(body) {
   if (!body) return {}
   if (typeof body === 'string') return JSON.parse(body)
   return body
+}
+
+function getStorageBucket() {
+  return process.env.SUPABASE_STORAGE_BUCKET || DEFAULT_STORAGE_BUCKET
 }
 
 async function userHasClientAccess(userId, clientId) {
@@ -35,9 +39,6 @@ export default async function handler(req, res) {
   const user = await getCurrentUser(req)
   if (!user) return json(res, 401, { error: 'Unauthorized' })
 
-  const bucketName = process.env.R2_BUCKET_NAME
-  if (!bucketName) return json(res, 500, { error: 'Document storage is not configured.' })
-
   let payload
   try {
     payload = parseBody(req.body)
@@ -50,9 +51,10 @@ export default async function handler(req, res) {
 
   try {
     const supabaseAdmin = getSupabaseAdmin()
+    const bucketName = getStorageBucket()
     const { data: document, error } = await supabaseAdmin
       .from('documents')
-      .select('id, client_id, storage_key, original_file_name, file_type')
+      .select('id, client_id, storage_key')
       .eq('id', documentId)
       .single()
 
@@ -61,18 +63,15 @@ export default async function handler(req, res) {
     const hasAccess = await userHasClientAccess(user.id, document.client_id)
     if (!hasAccess) return json(res, 403, { error: 'You do not have access to this document.' })
 
-    const downloadUrl = await getSignedUrl(
-      getR2Client(),
-      new GetObjectCommand({
-        Bucket: bucketName,
-        Key: document.storage_key,
-        ResponseContentType: document.file_type || undefined,
-        ResponseContentDisposition: `inline; filename="${document.original_file_name.replace(/"/g, '')}"`,
-      }),
-      { expiresIn: 60 * 10 },
-    )
+    const { data: signedUrlData, error: signedUrlError } = await supabaseAdmin.storage
+      .from(bucketName)
+      .createSignedUrl(document.storage_key, 60 * 5)
 
-    return json(res, 200, { downloadUrl })
+    if (signedUrlError || !signedUrlData?.signedUrl) {
+      throw signedUrlError || new Error('Failed to create signed download URL.')
+    }
+
+    return json(res, 200, { downloadUrl: signedUrlData.signedUrl })
   } catch (error) {
     console.error('[documents-download-url]', error)
     return json(res, 500, { error: 'Failed to create download URL.' })

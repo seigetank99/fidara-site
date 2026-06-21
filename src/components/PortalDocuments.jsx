@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { getSupabaseBrowser } from '../lib/supabaseBrowser.js'
 
 const CATEGORY_OPTIONS = [
   { value: 'general', label: 'General' },
@@ -6,6 +7,8 @@ const CATEGORY_OPTIONS = [
   { value: 'bookkeeping', label: 'Bookkeeping' },
   { value: 'payroll', label: 'Payroll' },
 ]
+const DEFAULT_STORAGE_BUCKET = 'fidara-client-documents'
+const STORAGE_BUCKET = import.meta.env.PUBLIC_SUPABASE_STORAGE_BUCKET || DEFAULT_STORAGE_BUCKET
 
 export default function PortalDocuments() {
   const [clientId, setClientId] = useState('')
@@ -132,16 +135,21 @@ export default function PortalDocuments() {
         throw new Error(urlData?.error || 'Failed to prepare upload.')
       }
 
-      const uploadResponse = await fetch(urlData.uploadUrl, {
-        method: 'PUT',
-        headers: {
-          'content-type': file.type,
-        },
-        body: file,
-      })
+      const upload = urlData?.upload
+      if (!upload?.path || !upload?.token) {
+        throw new Error('Upload target is missing.')
+      }
 
-      if (!uploadResponse.ok) {
-        throw new Error('Upload failed.')
+      const supabase = getSupabaseBrowser()
+      const { error: signedUploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .uploadToSignedUrl(upload.path, upload.token, file, {
+          contentType: file.type || undefined,
+          upsert: false,
+        })
+
+      if (signedUploadError) {
+        throw signedUploadError
       }
 
       setFile(null)
