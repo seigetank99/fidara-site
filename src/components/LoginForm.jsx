@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
 const COOLDOWN_AFTER_FAILED_ATTEMPTS = 3
 const COOLDOWN_SECONDS = 30
@@ -10,6 +11,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [, setFailedAttempts] = useState(0)
   const [cooldownSeconds, setCooldownSeconds] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (!cooldownSeconds) return undefined
@@ -81,14 +83,24 @@ export default function LoginForm() {
 
         <label className="grid gap-2">
           <span className="text-sm font-medium text-slate-800">Password</span>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="rounded-md border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-            required
-          />
+          <span className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full rounded-md border border-stone-300 bg-white px-4 py-3 pr-12 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex w-12 items-center justify-center text-slate-500 transition hover:text-slate-900"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+            </button>
+          </span>
         </label>
 
         {error ? (

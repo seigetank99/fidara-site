@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { getSupabaseBrowser } from '../lib/supabaseBrowser.js'
 
 export default function ResetPasswordForm() {
@@ -8,6 +9,8 @@ export default function ResetPasswordForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -82,28 +85,48 @@ export default function ResetPasswordForm() {
       <div className="grid gap-5">
         <label className="grid gap-2">
           <span className="text-sm font-medium text-slate-800">New password</span>
-          <input
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="rounded-md border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-            minLength={8}
-            required
-          />
+          <span className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full rounded-md border border-stone-300 bg-white px-4 py-3 pr-12 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+              minLength={8}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex w-12 items-center justify-center text-slate-500 transition hover:text-slate-900"
+              aria-label={showPassword ? 'Hide new password' : 'Show new password'}
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+            </button>
+          </span>
         </label>
 
         <label className="grid gap-2">
           <span className="text-sm font-medium text-slate-800">Confirm password</span>
-          <input
-            type="password"
-            autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            className="rounded-md border border-stone-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
-            minLength={8}
-            required
-          />
+          <span className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              className="w-full rounded-md border border-stone-300 bg-white px-4 py-3 pr-12 text-base text-slate-900 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+              minLength={8}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex w-12 items-center justify-center text-slate-500 transition hover:text-slate-900"
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+            </button>
+          </span>
         </label>
 
         {success ? (
