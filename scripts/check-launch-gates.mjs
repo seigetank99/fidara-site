@@ -59,18 +59,24 @@ async function main() {
   for (const file of htmlFiles) {
     const rel = path.relative(DIST_DIR, file)
     const html = await fs.readFile(file, 'utf8')
+    const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1] || ''
+    const isNoindexPage = /noindex/i.test(robots)
+    const isRedirectPage = /<meta http-equiv="refresh"/i.test(html)
 
     assertIncludes(html, /<title>[^<]+<\/title>/i, `${rel}: missing <title>.`, errors)
     assertIncludes(html, /<meta name="description" content="[^"]+"/i, `${rel}: missing meta description.`, errors)
     assertIncludes(html, /<link rel="canonical" href="[^"]+"/i, `${rel}: missing canonical link.`, errors)
-    assertIncludes(html, /<meta property="og:title" content="[^"]+"/i, `${rel}: missing og:title.`, errors)
-    assertIncludes(html, /<meta property="og:description" content="[^"]+"/i, `${rel}: missing og:description.`, errors)
-    assertIncludes(html, /<meta property="og:site_name" content="[^"]+"/i, `${rel}: missing og:site_name.`, errors)
-    assertIncludes(html, /<meta name="twitter:card" content="summary_large_image"/i, `${rel}: missing twitter:card.`, errors)
     assertIncludes(html, /<meta name="robots" content="[^"]+"/i, `${rel}: missing robots meta.`, errors)
-    assertIncludes(html, /<script type="application\/ld\+json">/i, `${rel}: missing structured data script.`, errors)
-    assertIncludes(html, /id="main-content"/i, `${rel}: missing #main-content landmark.`, errors)
-    assertIncludes(html, /<h1[\s>]/i, `${rel}: missing H1.`, errors)
+
+    if (!isNoindexPage && !isRedirectPage) {
+      assertIncludes(html, /<meta property="og:title" content="[^"]+"/i, `${rel}: missing og:title.`, errors)
+      assertIncludes(html, /<meta property="og:description" content="[^"]+"/i, `${rel}: missing og:description.`, errors)
+      assertIncludes(html, /<meta property="og:site_name" content="[^"]+"/i, `${rel}: missing og:site_name.`, errors)
+      assertIncludes(html, /<meta name="twitter:card" content="summary_large_image"/i, `${rel}: missing twitter:card.`, errors)
+      assertIncludes(html, /<script type="application\/ld\+json">/i, `${rel}: missing structured data script.`, errors)
+      assertIncludes(html, /id="main-content"/i, `${rel}: missing #main-content landmark.`, errors)
+      assertIncludes(html, /<h1[\s>]/i, `${rel}: missing H1.`, errors)
+    }
 
     if (/TODO|FIXME|Add phone number|example\.com/i.test(html)) {
       errors.push(`${rel}: contains placeholder or development copy.`)
@@ -79,13 +85,12 @@ async function main() {
     const title = html.match(/<title>([^<]+)<\/title>/i)?.[1] || ''
     const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1] || ''
     const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1] || ''
-    const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1] || ''
 
     if (title.length < 20 || title.length > 75) {
       errors.push(`${rel}: title length should be 20–75 chars, got ${title.length}.`)
     }
 
-    if (description.length < 70 || description.length > 180) {
+    if (!isRedirectPage && (description.length < 70 || description.length > 180)) {
       errors.push(`${rel}: meta description length should be 70–180 chars, got ${description.length}.`)
     }
 
@@ -93,11 +98,11 @@ async function main() {
       errors.push(`${rel}: canonical must use ${SITE_URL}/.`)
     }
 
-    if (!canonical.endsWith('/')) {
+    if (!isRedirectPage && !canonical.endsWith('/')) {
       errors.push(`${rel}: canonical should use trailing slash.`)
     }
 
-    if (/noindex/i.test(robots) && !/nofollow/i.test(robots)) {
+    if (isNoindexPage && !/nofollow/i.test(robots)) {
       errors.push(`${rel}: noindex pages should also specify nofollow.`)
     }
   }

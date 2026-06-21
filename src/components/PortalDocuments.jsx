@@ -19,8 +19,12 @@ export default function PortalDocuments() {
 
   const hasDocuments = useMemo(() => documents.length > 0, [documents])
 
-  async function loadDocuments() {
-    setLoading(true)
+  function redirectToLogin() {
+    window.location.assign('/login')
+  }
+
+  async function loadDocuments({ showLoading = false } = {}) {
+    if (showLoading) setLoading(true)
     setError('')
 
     try {
@@ -29,7 +33,7 @@ export default function PortalDocuments() {
       })
 
       if (response.status === 401) {
-        window.location.href = '/login'
+        redirectToLogin()
         return
       }
 
@@ -49,7 +53,47 @@ export default function PortalDocuments() {
   }
 
   useEffect(() => {
-    loadDocuments()
+    let cancelled = false
+
+    async function initializeDocuments() {
+      setError('')
+
+      try {
+        const response = await fetch('/api/documents-list', {
+          headers: { accept: 'application/json' },
+        })
+
+        if (response.status === 401) {
+          redirectToLogin()
+          return
+        }
+
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok) {
+          throw new Error(data?.error || 'Failed to load documents.')
+        }
+
+        if (cancelled) return
+
+        setClientId(data.clientId || '')
+        setDocuments(Array.isArray(data.documents) ? data.documents : [])
+      } catch (loadError) {
+        if (!cancelled) {
+          setError(loadError.message || 'Failed to load documents.')
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    void initializeDocuments()
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   async function handleUpload(event) {
@@ -78,7 +122,7 @@ export default function PortalDocuments() {
       })
 
       if (urlResponse.status === 401) {
-        window.location.href = '/login'
+        redirectToLogin()
         return
       }
 
@@ -103,7 +147,7 @@ export default function PortalDocuments() {
       setFile(null)
       const fileInput = document.getElementById('portal-file-input')
       if (fileInput) fileInput.value = ''
-      await loadDocuments()
+      await loadDocuments({ showLoading: true })
     } catch (submitError) {
       setUploadError(submitError.message || 'Upload failed.')
     } finally {
@@ -122,7 +166,7 @@ export default function PortalDocuments() {
       })
 
       if (response.status === 401) {
-        window.location.href = '/login'
+        redirectToLogin()
         return
       }
 
@@ -140,7 +184,7 @@ export default function PortalDocuments() {
 
   async function handleLogout() {
     await fetch('/api/logout', { method: 'POST' }).catch(() => {})
-    window.location.href = '/login'
+    redirectToLogin()
   }
 
   return (
