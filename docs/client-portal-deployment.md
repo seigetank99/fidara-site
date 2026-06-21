@@ -288,19 +288,26 @@ These pages should remain plain-language and avoid overclaiming compliance certi
 
 ## 15. Final Launch Test Checklist
 
+Local verification before deployment:
+
+- Run `npm run ci`.
+- Run `npm run test:e2e`.
+
 Run these checks on the production deployment:
 
 - Public site loads.
 - Chatbot appears on public pages only.
 - `/login` works for client.
 - `/portal` loads.
+- Client logout redirects to `/login`.
 - Upload PDF works.
 - Download PDF works.
-- `/forgot-password` sends reset email.
-- `/reset-password` updates password.
-- `/staff-login` rejects non-admin user.
-- `/staff-login` accepts admin user.
-- Direct `/admin` while logged out does not show admin data.
+- `/forgot-password` sends reset email end to end.
+- `/reset-password` updates password end to end.
+- `/staff-login` accepts admin user and opens `/admin`.
+- `/staff-login` rejects non-admin user with the staff-access message.
+- Direct `/admin` while logged out redirects to `/staff-login` and does not show admin data.
+- Admin logout redirects to `/staff-login`.
 - Admin can create client.
 - Admin can link/invite user.
 - Admin can create request.
@@ -308,6 +315,7 @@ Run these checks on the production deployment:
 - Admin can create portal message.
 - Client sees request/billing/message in `/portal`.
 - Admin can update document status.
+- Two-client isolation works: client A cannot see client B documents, requests, billing, messages, or audit events.
 - Audit log updates.
 
 Also confirm:
@@ -316,12 +324,14 @@ Also confirm:
 - Portal notification emails send when SMTP is configured.
 - Notification email failure does not block admin actions.
 - Archived/deleted documents remain hidden from clients.
+- Staff Login footer link points to `/staff-login` and remains discreet/muted.
 
 ## 16. Local Verification
 
 Before deployment, run:
 
 ```sh
+npm run ci
 npm run build
 ```
 
