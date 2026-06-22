@@ -151,7 +151,7 @@ export function getPageMeta(path) {
         'Choose the Fidara path that best matches your needs, from messy books and payroll to U.S. expansion and managed IT support.',
     },
     '/': {
-      title: 'Fidara | Financial Clarity for Life and Business',
+      title: 'Fidara | Modern accounting with a personal touch.',
       description:
         'Accounting, tax, advisory, payroll, technology, and strategic support for every stage of life and business.',
     },
