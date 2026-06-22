@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const DOCUMENT_STATUSES = ['received', 'reviewing', 'completed']
 const BILLING_STATUSES = ['open', 'paid', 'overdue']
@@ -201,9 +201,9 @@ export default function AdminPortal() {
 
   const hasClients = useMemo(() => clients.length > 0, [clients])
 
-  function redirectToStaffLogin() {
+  const redirectToStaffLogin = useCallback(() => {
     window.location.assign('/staff-login')
-  }
+  }, [])
 
   function clearNotice() {
     setNotice({ kind: '', message: '' })
@@ -241,7 +241,7 @@ export default function AdminPortal() {
     return result.data
   }
 
-  async function loadAdmin(nextFilter = documentFilter) {
+  const loadAdmin = useCallback(async (nextFilter = documentFilter) => {
     setError('')
     const [summaryResult, documentsResult, clientsResult, requestsResult, billingResult, messagesResult] = await Promise.all([
       fetchJson('/api/admin?action=summary', { headers: { accept: 'application/json' } }),
@@ -275,7 +275,7 @@ export default function AdminPortal() {
     setBillingItems(Array.isArray(billingResult.data?.billingItems) ? billingResult.data.billingItems : [])
     setMessages(Array.isArray(messagesResult.data?.messages) ? messagesResult.data.messages : [])
     setVerified(true)
-  }
+  }, [documentFilter, redirectToStaffLogin])
 
   useEffect(() => {
     let cancelled = false
@@ -294,7 +294,7 @@ export default function AdminPortal() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [loadAdmin])
 
   useEffect(() => {
     if (!verified) return
@@ -314,7 +314,7 @@ export default function AdminPortal() {
     }
 
     void reloadDocuments()
-  }, [documentFilter])
+  }, [documentFilter, redirectToStaffLogin, verified])
 
   async function refreshAdminData() {
     try {

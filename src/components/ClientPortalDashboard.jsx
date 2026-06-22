@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getSupabaseBrowser } from '../lib/supabaseBrowser.js'
 
 const CATEGORY_OPTIONS = [
@@ -149,15 +149,15 @@ export default function ClientPortalDashboard() {
   const hasMessages = useMemo(() => messages.length > 0, [messages])
   const hasAuditEvents = useMemo(() => auditEvents.length > 0, [auditEvents])
 
-  function redirectToLogin() {
+  const redirectToLogin = useCallback(() => {
     window.location.assign('/login')
-  }
+  }, [])
 
-  function assignClientId(nextClientId) {
+  const assignClientId = useCallback((nextClientId) => {
     if (nextClientId) setClientId(nextClientId)
-  }
+  }, [])
 
-  async function loadSummary() {
+  const loadSummary = useCallback(async () => {
     setSummaryLoading(true)
     const result = await fetchJson('/api/portal?action=summary', { headers: { accept: 'application/json' } })
 
@@ -173,9 +173,9 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setSummary(result.data.stats || null)
     setSummaryLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
-  async function loadDocuments({ showLoading = false } = {}) {
+  const loadDocuments = useCallback(async ({ showLoading = false } = {}) => {
     if (showLoading) setDocumentsLoading(true)
     const result = await fetchJson('/api/portal?action=documents', { headers: { accept: 'application/json' } })
 
@@ -191,9 +191,9 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setDocuments(Array.isArray(result.data.documents) ? result.data.documents : [])
     setDocumentsLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
-  async function loadBilling() {
+  const loadBilling = useCallback(async () => {
     setBillingLoading(true)
     const result = await fetchJson('/api/portal?action=billing', { headers: { accept: 'application/json' } })
 
@@ -209,9 +209,9 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setBillingItems(Array.isArray(result.data.billingItems) ? result.data.billingItems : [])
     setBillingLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
-  async function loadRequests() {
+  const loadRequests = useCallback(async () => {
     setRequestsLoading(true)
     const result = await fetchJson('/api/portal?action=requests', { headers: { accept: 'application/json' } })
 
@@ -227,9 +227,9 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setRequests(Array.isArray(result.data.requests) ? result.data.requests : [])
     setRequestsLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     setMessagesLoading(true)
     const result = await fetchJson('/api/portal?action=messages', { headers: { accept: 'application/json' } })
 
@@ -245,9 +245,9 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setMessages(Array.isArray(result.data.messages) ? result.data.messages : [])
     setMessagesLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
-  async function loadAuditEvents() {
+  const loadAuditEvents = useCallback(async () => {
     setAuditLoading(true)
     const result = await fetchJson('/api/portal?action=audit', { headers: { accept: 'application/json' } })
 
@@ -263,7 +263,7 @@ export default function ClientPortalDashboard() {
     assignClientId(result.data.clientId)
     setAuditEvents(Array.isArray(result.data.auditEvents) ? result.data.auditEvents : [])
     setAuditLoading(false)
-  }
+  }, [assignClientId, redirectToLogin])
 
   useEffect(() => {
     let cancelled = false
@@ -292,7 +292,7 @@ export default function ClientPortalDashboard() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [loadAuditEvents, loadBilling, loadDocuments, loadMessages, loadRequests, loadSummary])
 
   async function refreshAfterUpload() {
     await Promise.all([loadSummary(), loadDocuments({ showLoading: true }), loadAuditEvents()])
